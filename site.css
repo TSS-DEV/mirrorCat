@@ -1,0 +1,143 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+body > .container,
+body > .container-fluid {
+  flex: 1;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.card {
+  border-radius: .65rem;
+}
+
+.card-header {
+  border-top-left-radius: .65rem !important;
+  border-top-right-radius: .65rem !important;
+}
+
+.results-table {
+  min-width: 960px;
+}
+
+.results-table thead th {
+  white-space: nowrap;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #6c757d;
+}
+
+.results-table td {
+  max-width: 320px;
+}
+
+.js-row-details {
+  cursor: pointer;
+}
+
+#search-progress {
+  transition: width .25s ease;
+}
+
+details summary {
+  cursor: pointer;
+}
+
+/* Bootstrap 5.0 does not ship the .text-bg-* helpers used by the badges. */
+.text-bg-primary { color: #fff !important; background-color: #0d6efd !important; }
+.text-bg-secondary { color: #fff !important; background-color: #6c757d !important; }
+.text-bg-success { color: #fff !important; background-color: #198754 !important; }
+.text-bg-danger { color: #fff !important; background-color: #dc3545 !important; }
+.text-bg-warning { color: #000 !important; background-color: #ffc107 !important; }
+.text-bg-info { color: #000 !important; background-color: #0dcaf0 !important; }
+
+footer {
+  margin-top: auto;
+}
+
+.navbar {
+  transition: top 0.5s ease;
+}
+
+.navbar-hide {
+  top: -60px;
+}
+
+.footer {
+  transition: bottom 0.5s ease;
+}
+
+.footer-hide {
+  bottom: -60px;
+}
+
+.btn-md {
+  width: 100px;
+}
+
+.btn-wx {
+  width: 150px;
+}
+
+.img-xl {
+  height: 48px;
+}
+
+.img-lg {
+  height: 36px;
+}
+
+.img-md {
+  height: 24px;
+}
+
+.img-sm {
+  height: 18px;
+}
+
+.img-xs {
+  height: 9px;
+}
+
+#copyright {
+  text-align: center;
+  padding: .3em;
+}
+
+.top-spacer {
+  margin-top: 60px;
+}
+
+.bottom-spacer {
+  padding: 10px;
+  padding-right: 11px;
+  margin-bottom: 90px;
+}
+
+/* Mobile First: Default style for mobile screens */
+.img-height {
+  width: 100%;
+}
+
+/* Desktop: Screen sizes 768px and wider */
+@media (min-width: 768px) {
+  .img-height {
+    height: 200px;
+    object-fit: contain;
+  }
+}
+
+@media (min-width: 768px) {
+  .carousel-inner .carousel-item {
+    display: flex !important;
+  }
+}
