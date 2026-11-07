@@ -1,6 +1,5 @@
-# Local runtime data. The SQLite database holds user accounts, OCLC
-# credentials and uploaded spreadsheets, so it must never be committed.
-include/*.db
+# The seeded SQLite database is committed so a fresh install starts with a
+# working schema and the ADMIN account. Runtime sidecar files stay ignored.
 include/*.db-*
 include/*.db.*
 
