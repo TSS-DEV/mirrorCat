@@ -28,7 +28,7 @@ The app is self-contained: PHP + PDO SQLite, no Composer, no PhpSpreadsheet and 
    - turn on **Demo mode** to try the whole workflow without credentials.
 6. Create a batch by uploading a spreadsheet. A sample workbook is available from the upload page (`sample.php`).
 
-The SQLite database (`include/mirrorcat.db`) and its schema are created automatically. It stores user accounts, OCLC credentials and uploaded spreadsheets, so it is excluded by `.gitignore` and must never be committed or shared. The legacy `themes` table from the original boilerplate is left untouched.
+The repository includes a clean seed database at `include/mirrorcat.db` with the schema and the `ADMIN` account, so a fresh clone starts with a working install. At runtime the file stores user accounts, OCLC credentials, uploaded spreadsheet metadata and search results. Keep credentials out of version control: if you configure real OCLC keys or add users locally, do not commit those changes to the tracked database. Runtime SQLite sidecar files (`-wal`/`-shm`) are ignored.
 
 ## Authentication
 
