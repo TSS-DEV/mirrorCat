@@ -22,7 +22,6 @@ function db() {
 
 /**
  * Create the application tables and the default settings.
- * The legacy "themes" table from the boilerplate is deliberately left alone.
  *
  * The schema version is stored in SQLite's user_version pragma so normal
  * requests do not need to run write statements just to open the database.
