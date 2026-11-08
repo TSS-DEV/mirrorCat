@@ -30,6 +30,112 @@ The app is self-contained: PHP + PDO SQLite, no Composer, no PhpSpreadsheet and 
 
 The repository includes a clean seed database at `include/mirrorcat.db` with the schema and the `ADMIN` account, so a fresh clone starts with a working install. At runtime the file stores user accounts, OCLC credentials, uploaded spreadsheet metadata and search results. Keep credentials out of version control: if you configure real OCLC keys or add users locally, do not commit those changes to the tracked database. Runtime SQLite sidecar files (`-wal`/`-shm`) are ignored.
 
+## Deployment
+
+mirrorCAT has no build step and no Composer dependencies. Copy the files to the web root or a subdirectory; the relative links work in either case. Shared hosting with PHP 8.1+ is sufficient.
+
+### Server requirements
+
+- PHP 8.1+ with `curl`, `pdo_sqlite`, `simplexml`, `mbstring` and `zlib`.
+- Apache or Nginx. Apache needs `.htaccess` support (see below); Nginx needs equivalent deny rules.
+- Write access for the web-server user to `include/` (SQLite database and `-wal`/`-shm` files) and `include/uploads/` (uploaded spreadsheets).
+- Outbound HTTPS access to `metadata.api.oclc.org` and `oauth.oclc.org`, unless demo mode is enabled.
+- Browser access to the jsDelivr CDN for Bootstrap and Bootstrap Icons.
+
+Do not use PHP's built-in server (`php -S`) for production; it ignores `.htaccess` and would expose the database and includes.
+
+### Permissions
+
+The web-server account must be able to create and update the SQLite database:
+
+```bash
+# Linux example; adjust the user/group for your distribution
+sudo chown -R www-data:www-data include
+sudo chmod -R u+rwX include
+```
+
+On Windows/XAMPP the default Apache account already has access to `htdocs`. If you move the project elsewhere, grant the Apache service account modify rights to `include/`.
+
+### Apache and .htaccess
+
+`include/.htaccess` denies direct web access to the database, uploads and PHP includes. Apache must be allowed to read it:
+
+```apache
+<Directory "C:/xampp/htdocs/mirrorCAT/include">
+    AllowOverride All
+    Require all granted
+</Directory>
+```
+
+If `AllowOverride` cannot be enabled, move `include/` outside the document root or add an equivalent server-level deny rule. Never leave `include/mirrorcat.db` downloadable.
+
+For Nginx, deny the protected path explicitly:
+
+```nginx
+location ^~ /include/ {
+    return 404;
+}
+```
+
+A minimal HTTPS virtual host:
+
+```apache
+<VirtualHost *:443>
+    ServerName mirrorcat.example.org
+    DocumentRoot "C:/xampp/htdocs/mirrorCAT"
+
+    <Directory "C:/xampp/htdocs/mirrorCAT">
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    SSLEngine on
+    SSLCertificateFile    "C:/path/to/fullchain.pem"
+    SSLCertificateKeyFile "C:/path/to/privkey.pem"
+</VirtualHost>
+```
+
+Use HTTPS whenever the app is reachable beyond localhost; sign-in credentials and OCLC tokens travel over the connection.
+
+### PHP settings
+
+For larger spreadsheets, raise the relevant limits in `php.ini`:
+
+```ini
+upload_max_filesize = 32M
+post_max_size = 32M
+max_execution_time = 300
+memory_limit = 512M
+```
+
+Searches are chunked, so long-running requests are limited mainly by import size and MARC exports.
+
+### First-run checklist
+
+1. Set a password for the seeded `ADMIN` account and add real users on **Users**.
+2. Configure OCLC credentials on **Settings**, or leave demo mode on only while testing.
+3. Set the application name and defaults on **Settings**.
+4. Confirm `include/mirrorcat.db` is not reachable over HTTP.
+5. Back up the database regularly; it is not encrypted.
+
+The seeded `ADMIN` account has no password and can sign in without one only through the localhost bypass. On a remote server, either set its password in a local test copy before deploying, or use an SSH tunnel to reach the server's localhost for the first sign-in.
+
+### Keeping the seed database clean
+
+The repository ships a clean seed database. If you use the same checkout for testing, runtime changes (users, credentials, batches) will appear as modifications to `include/mirrorcat.db`.
+
+Keep a separate test copy of the project and use the publishing checkout only for code changes. To reset the tracked database before committing:
+
+1. Stop the web server so SQLite releases the file.
+2. Delete `include/mirrorcat.db-wal` and `include/mirrorcat.db-shm` if present.
+3. Restore the seed file from a clean clone, or run:
+
+```powershell
+git checkout -- include/mirrorcat.db
+```
+
+Then check `git status` to confirm the database is unmodified.
+
 ## Authentication
 
 Sign-in supports two modes, chosen on **Settings → Authentication**:
